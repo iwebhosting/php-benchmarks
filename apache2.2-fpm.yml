@@ -32,6 +32,9 @@
         template: src=templates/apache2_fpm.j2  dest=/etc/apache2/sites-enabled/bench.conf
         notify: reload apache2
 
+      - name: start fpm
+        service: name=php5-fpm state=started
+
     handlers:
       - name: restart apache2
         service: name=apache2 state=restarted
