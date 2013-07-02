@@ -1,0 +1,16 @@
+<VirtualHost *:80>
+    ServerName default
+    ServerAdmin admin@localhost
+    DocumentRoot "/home/bench/public_html/"
+
+    RewriteEngine On
+    RewriteOptions Inherit
+
+    <Directory "/home/bench/public_html/">
+        Options FollowSymLinks
+        AllowOverride All
+        Order allow,deny
+        allow from all
+    </Directory>
+
+</VirtualHost>

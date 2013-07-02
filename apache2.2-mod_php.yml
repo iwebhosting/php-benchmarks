@@ -1,0 +1,37 @@
+---
+  - hosts: all
+    tasks:
+      - name: install basic packages
+        apt: pkg={{ item }} state=present
+        with_items:
+          - apache2-mpm-prefork
+          - libapache2-mod-php5
+
+      - name: activate apache2 modules
+        command: /usr/sbin/a2enmod $item creates=/etc/apache2/mods-enabled/$item.load
+        with_items:
+          - fastcgi
+          - rewrite
+          - headers
+          - actions
+          - expires
+          - php5
+        notify: restart apache2
+
+      - name: install main apache2 config
+        template: src=templates/apache2.conf.j2  dest=/etc/apache2/apache2.conf
+        notify: restart apache2
+
+      - name: disable default site
+        command: /usr/sbin/a2dissite default removes=/etc/apache2/sites-enabled/000-default
+        notify: reload apache2
+
+      - name: install mod_php site config
+        template: src=templates/apache2_mod_php.j2  dest=/etc/apache2/sites-enabled/bench.conf
+        notify: reload apache2
+
+    handlers:
+      - name: restart apache2
+        service: name=apache2 state=restarted
+      - name: reload apache2
+        service: name=apache2 state=reloaded
