@@ -20,6 +20,10 @@
           - expires
         notify: restart apache2
 
+      - name: install main apache2 config
+        template: src=templates/apache2.conf.j2  dest=/etc/apache2/apache2.conf
+        notify: restart apache2
+
       - name: disable default site
         command: /usr/sbin/a2dissite default removes=/etc/apache2/sites-enabled/000-default
         notify: reload apache2
