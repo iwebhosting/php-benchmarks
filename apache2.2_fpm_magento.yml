@@ -1,0 +1,6 @@
+---
+  - include: common.yml
+  - include: fpm.yml
+  - include: apache2.2-fpm.yml
+  - include: magento.yml
+
