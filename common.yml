@@ -1,6 +1,9 @@
 ---
   - hosts: all
     tasks:
+      - name: enable multiverse
+        lineinfile: dest=/etc/apt/sources.list regexp='^deb .* multiverse' line='deb http://security.ubuntu.com/ubuntu {{ ansible_lsb.codename }} multiverse'
+
       - name: ensure sources are up to date
         command: apt-get update
 
