@@ -1,0 +1,35 @@
+---
+  - hosts: all
+    tasks:
+      - name: make fcgi dir
+        file: dest=/home/bench/fastcgi state=directory owner=bench group=bench
+
+      - name: install basic packages
+        apt: pkg={{ item }} state=present
+        with_items:
+          - apache2-mpm-worker
+          - libapache2-mod-fastcgi
+
+      - name: activate apache2 modules
+        command: /usr/sbin/a2enmod $item creates=/etc/apache2/mods-enabled/$item.load
+        with_items:
+          - fastcgi
+          - rewrite
+          - headers
+          - actions
+          - expires
+        notify: restart apache2
+
+      - name: disable default site
+        command: /usr/sbin/a2dissite default removes=/etc/apache2/sites-enabled/000-default
+        notify: reload apache2
+
+      - name: install fpm site config
+        template: src=templates/apache2_fpm.j2  dest=/etc/apache2/sites-enabled/bench.conf
+        notify: reload apache2
+
+    handlers:
+      - name: restart apache2
+        service: name=apache2 state=restarted
+      - name: reload apache2
+        service: name=apache2 state=reloaded

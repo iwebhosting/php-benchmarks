@@ -1,0 +1,11 @@
+[fpm]
+user = bench
+group = bench
+listen = /var/$pool.sock
+pm = static
+pm.max_children = 4
+pm.start_servers = 4
+pm.min_spare_servers = 4
+pm.max_spare_servers = 4
+chdir = /home/bench/public_html
+catch_workers_output = yes

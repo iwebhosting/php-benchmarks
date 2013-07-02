@@ -1,0 +1,21 @@
+---
+  - hosts: all
+    tasks:
+      - name: install basic packages
+        apt: pkg={{ item }} state=present
+        with_items:
+          - php5-fpm
+
+      - name: remove default fpm pool
+        file: path=/etc/php5/fpm/pool.d/www.conf state=absent
+        notify: reload fpm
+
+      - name: install fpm config
+        template: src=templates/fpm_pool.j2  dest=/etc/php5/fpm/pool.d/bench.conf
+        notify: reload fpm
+
+    handlers:
+      - name: restart fpm
+        service: name=php5-fpm state=restarted
+      - name: reload fpm
+        service: name=php5-fpm state=reloaded
