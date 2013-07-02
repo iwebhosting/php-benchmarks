@@ -17,6 +17,9 @@
           - php5-mysql
           - php5-mcrypt
           - python-mysqldb
+          - phantomjs
+          - xvfb
+          - libicu48 # To squash 'cannot open shared object file' warnings
 
       - name: setup benchmark user
         user: name=bench
