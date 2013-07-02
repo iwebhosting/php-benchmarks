@@ -1,0 +1,39 @@
+---
+  - hosts: all
+    tasks:
+      - name: create magento database
+        mysql_db: db=magento state=present
+
+      - name: create magento database user
+        mysql_user: name=magento password=magento priv=magento.*:ALL state=present
+
+      - name: checkout magento source
+        subversion: repo=http://svn.magentocommerce.com/source/branches/1.7 dest=/home/bench/public_html
+
+      - name: fix docrot ownership
+        command: chown -R bench:www-data /home/bench/public_html
+
+      - name: run magento installer
+        command: >
+                   php -f install.php --
+                   --license_agreement_accepted "yes" 
+                   --locale "en_GB" 
+                   --timezone "Europe/London" 
+                   --default_currency "GBP" 
+                   --db_host "localhost" 
+                   --db_name "magento" 
+                   --db_user "magento" 
+                   --db_pass "magento" 
+                   --url "localhost" 
+                   --use_rewrites "yes" 
+                   --use_secure "no" 
+                   --secure_base_url "" 
+                   --use_secure_admin "no" 
+                   --admin_firstname "Admin" 
+                   --admin_lastname "Person" 
+                   --admin_email "admin@localhost.com" 
+                   --admin_username "admin" 
+                   --admin_password "password1"
+                   --skip_url_validation
+                   chdir=/home/bench/public_html
+        
